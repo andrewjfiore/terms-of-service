@@ -1,0 +1,367 @@
+{
+  "$schema": "Curated GameNative per-title DB. Append entries here; validated by gamesLoader.ts. Metadata + engine/API/DRM drive shared overrides; perTier refines for a device tier (A wins over shared).",
+  "games": [
+    {
+      "id": "elden-ring",
+      "title": "Elden Ring",
+      "aliases": ["eldenring", "elden ring shadow of the erdtree"],
+      "steamAppId": 1245620,
+      "engine": "proprietary",
+      "primaryAPI": "DX12",
+      "bitness": 64,
+      "drm": "Steam-DRM",
+      "anticheat": "EAC",
+      "year": 2022,
+      "shared": {
+        "dxwrapper": "vkd3d",
+        "dxwrapperConfig": { "vkd3dLevel": "12_1", "version": "2.14.1" }
+      },
+      "perTier": {
+        "A": {
+          "containerVariant": "bionic",
+          "wineVersion": "proton-10.0-arm64ec-2",
+          "emulator": "FEXCore",
+          "graphicsDriver": "wrapper-v2",
+          "graphicsDriverVersion": "Turnip_Gen8_V23"
+        },
+        "A-": {
+          "containerVariant": "bionic",
+          "wineVersion": "proton-10.0-arm64ec-2",
+          "emulator": "FEXCore"
+        }
+      },
+      "notes": "EAC blocks online; offline single-player is OK. DX12 -> VKD3D. Will not run on Tier D/E (Mali / no DX12)."
+    },
+    {
+      "id": "cyberpunk-2077",
+      "title": "Cyberpunk 2077",
+      "aliases": ["cp2077", "cyberpunk"],
+      "steamAppId": 1091500,
+      "engine": "REDengine",
+      "primaryAPI": "DX12",
+      "bitness": 64,
+      "drm": "Steam-DRM",
+      "anticheat": "none",
+      "year": 2020,
+      "shared": {
+        "dxwrapper": "vkd3d",
+        "dxwrapperConfig": { "vkd3dLevel": "12_1" },
+        "fexcorePreset": "Fastest",
+        "screenSize": "1280x720",
+        "extras": { "sharpnessEffect": "CAS", "sharpnessLevel": "40" }
+      },
+      "perTier": {
+        "A": {
+          "wineVersion": "proton-10.0-arm64ec-2",
+          "graphicsDriver": "wrapper-v2",
+          "graphicsDriverVersion": "Turnip_Gen8_V23"
+        }
+      },
+      "notes": "Very heavy. Render at 720p + CAS even on Tier A. Realistically Tier A/A- only."
+    },
+    {
+      "id": "witcher-3",
+      "title": "The Witcher 3: Wild Hunt (Next-Gen)",
+      "aliases": ["witcher 3", "tw3", "the witcher 3"],
+      "steamAppId": 292030,
+      "engine": "REDengine",
+      "primaryAPI": "DX12",
+      "bitness": 64,
+      "drm": "none",
+      "anticheat": "none",
+      "year": 2022,
+      "shared": {
+        "dxwrapper": "vkd3d",
+        "dxwrapperConfig": { "vkd3dLevel": "12_1", "gpuName": "NVIDIA GeForce GTX 480" }
+      },
+      "perTier": {
+        "A": {
+          "wineVersion": "proton-10.0-arm64ec-2",
+          "graphicsDriver": "wrapper-v2",
+          "graphicsDriverVersion": "Turnip_Gen8_V23"
+        }
+      },
+      "notes": "Next-Gen build is DX12. Old-gen DX11 build is lighter. GPU-name spoof helps Hairworks paths."
+    },
+    {
+      "id": "skyrim",
+      "title": "The Elder Scrolls V: Skyrim (LE/SE)",
+      "aliases": ["skyrim", "skyrim se", "skyrim special edition", "tesv"],
+      "steamAppId": 489830,
+      "engine": "Creation",
+      "primaryAPI": "DX11",
+      "bitness": "32->64",
+      "drm": "Steam-DRM",
+      "anticheat": "none",
+      "year": 2016,
+      "shared": {
+        "dxwrapper": "dxvk",
+        "dxwrapperConfig": { "version": "2.4.1-gplasync" },
+        "envVars": "WINEDEBUG=-all,WINE_LARGE_ADDRESS_AWARE=1"
+      },
+      "perTier": {
+        "A": { "wineVersion": "proton-9.0-arm64ec", "emulator": "FEXCore" }
+      },
+      "notes": "LE is 32-bit (needs FEX-Core WoW64 on Tier A/A-). SE is 64-bit. Mods break paths."
+    },
+    {
+      "id": "gta-v",
+      "title": "Grand Theft Auto V",
+      "aliases": ["gtav", "gta 5", "grand theft auto 5"],
+      "steamAppId": 271590,
+      "engine": "RAGE",
+      "primaryAPI": "DX11",
+      "bitness": 64,
+      "drm": "none",
+      "anticheat": "BattlEye",
+      "year": 2015,
+      "shared": {
+        "dxwrapper": "dxvk",
+        "box64Preset": "PERFORMANCE"
+      },
+      "notes": "Rockstar Social Club online is painful; BattlEye blocks online. Offline / story mode OK."
+    },
+    {
+      "id": "hades-2",
+      "title": "Hades II",
+      "aliases": ["hades 2", "hades ii"],
+      "steamAppId": 1145350,
+      "engine": "proprietary",
+      "primaryAPI": "Vulkan",
+      "bitness": 64,
+      "drm": "Steam-DRM",
+      "anticheat": "none",
+      "year": 2024,
+      "shared": {
+        "dxwrapper": "none",
+        "graphicsDriver": "wrapper"
+      },
+      "notes": "Native Vulkan — no DX wrapper. Runs well across tiers."
+    },
+    {
+      "id": "hollow-knight-silksong",
+      "title": "Hollow Knight: Silksong",
+      "aliases": ["silksong", "hollow knight silksong"],
+      "steamAppId": 1030300,
+      "engine": "Unity",
+      "primaryAPI": "DX11",
+      "bitness": 64,
+      "drm": "Steam-DRM",
+      "anticheat": "none",
+      "year": 2025,
+      "shared": {
+        "dxwrapper": "dxvk",
+        "box64Preset": "STABILITY",
+        "execArgs": "-force-gfx-direct",
+        "unpackFiles": true
+      },
+      "notes": "Unity — STABILITY preset + -force-gfx-direct fixes GC stutter."
+    },
+    {
+      "id": "cuphead",
+      "title": "Cuphead",
+      "aliases": ["cup head"],
+      "steamAppId": 268910,
+      "engine": "Unity",
+      "primaryAPI": "DX11",
+      "bitness": 64,
+      "drm": "Steam-DRM",
+      "anticheat": "none",
+      "year": 2017,
+      "shared": {
+        "dxwrapper": "dxvk",
+        "box64Preset": "STABILITY",
+        "execArgs": "-force-gfx-direct",
+        "unpackFiles": true
+      },
+      "notes": "Light Unity title — runs at very high FPS on every tier."
+    },
+    {
+      "id": "hollow-knight",
+      "title": "Hollow Knight",
+      "aliases": ["hollowknight", "hk"],
+      "steamAppId": 367520,
+      "engine": "Unity",
+      "primaryAPI": "DX11",
+      "bitness": 64,
+      "drm": "Steam-DRM",
+      "anticheat": "none",
+      "year": 2017,
+      "shared": {
+        "dxwrapper": "dxvk",
+        "box64Preset": "STABILITY",
+        "execArgs": "-force-gfx-direct",
+        "unpackFiles": true
+      },
+      "notes": "Has an OpenGL fallback; DXVK path is preferred."
+    },
+    {
+      "id": "persona-5-royal",
+      "title": "Persona 5 Royal",
+      "aliases": ["p5r", "persona 5"],
+      "steamAppId": 1687950,
+      "engine": "proprietary",
+      "primaryAPI": "DX11",
+      "bitness": 64,
+      "drm": "Denuvo",
+      "anticheat": "none",
+      "year": 2022,
+      "shared": {
+        "dxwrapper": "dxvk",
+        "emulator": "FEXCore",
+        "fexcorePreset": "Fast",
+        "dxwrapperConfig": { "version": "2.4.1-gplasync", "asyncCache": "1" }
+      },
+      "notes": "Denuvo -> FEX-Core DENUVO path. Each container reinstall can burn an activation."
+    },
+    {
+      "id": "slay-the-spire",
+      "title": "Slay the Spire",
+      "aliases": ["sts", "slaythespire"],
+      "steamAppId": 646570,
+      "engine": "LibGDX",
+      "primaryAPI": "OpenGL",
+      "bitness": 64,
+      "drm": "Steam-DRM",
+      "anticheat": "none",
+      "year": 2019,
+      "shared": {
+        "dxwrapper": "wined3d",
+        "wincomponents": "vcrun2019=1,dotnet48=1,physx=1,xnafx40=1,openjdk=1"
+      },
+      "notes": "Java/LibGDX — OpenGL via WineD3D, requires a JRE (OpenJDK component)."
+    },
+    {
+      "id": "dave-the-diver",
+      "title": "Dave the Diver",
+      "aliases": ["davethediver", "dtd"],
+      "steamAppId": 1868140,
+      "engine": "Unity",
+      "primaryAPI": "DX11",
+      "bitness": 64,
+      "drm": "Steam-DRM",
+      "anticheat": "none",
+      "year": 2023,
+      "shared": {
+        "dxwrapper": "dxvk",
+        "box64Preset": "STABILITY",
+        "execArgs": "-force-gfx-direct",
+        "unpackFiles": true
+      },
+      "notes": "Needs unpackFiles=true or it throws 'Application load error 3:0000065432'."
+    },
+    {
+      "id": "resident-evil-4-2023",
+      "title": "Resident Evil 4 (2023)",
+      "aliases": ["re4 remake", "resident evil 4 remake", "re4"],
+      "steamAppId": 2050650,
+      "engine": "RE-Engine",
+      "primaryAPI": "DX12",
+      "bitness": 64,
+      "drm": "Denuvo",
+      "anticheat": "none",
+      "year": 2023,
+      "shared": {
+        "dxwrapper": "vkd3d",
+        "dxwrapperConfig": { "vkd3dLevel": "12_1" },
+        "emulator": "FEXCore",
+        "fexcorePreset": "Fast"
+      },
+      "perTier": {
+        "A": {
+          "wineVersion": "proton-10.0-arm64ec-2",
+          "graphicsDriver": "wrapper-v2",
+          "graphicsDriverVersion": "Turnip_Gen8_V23"
+        }
+      },
+      "notes": "RE Engine needs SSE4.2 + VK_EXT_robustness2 (VKD3D). Denuvo -> FEX-Core. Tier A/A- only."
+    },
+    {
+      "id": "cnc-red-alert",
+      "title": "Command & Conquer: Red Alert (any)",
+      "aliases": ["red alert", "cnc red alert", "command and conquer red alert"],
+      "engine": "SAGE",
+      "primaryAPI": "DirectDraw",
+      "bitness": 32,
+      "drm": "none",
+      "anticheat": "none",
+      "year": 1996,
+      "shared": {
+        "dxwrapper": "cnc-ddraw",
+        "box64Preset": "STABILITY"
+      },
+      "notes": "DirectDraw -> CNCDDraw. Runs on every tier including E."
+    },
+    {
+      "id": "dead-space-2008",
+      "title": "Dead Space (2008)",
+      "aliases": ["dead space", "deadspace"],
+      "steamAppId": 17470,
+      "engine": "proprietary",
+      "primaryAPI": "DX9",
+      "bitness": 32,
+      "drm": "Steam-DRM",
+      "anticheat": "none",
+      "year": 2008,
+      "shared": {
+        "dxwrapper": "dxvk",
+        "dxwrapperConfig": { "version": "async-1.10.3" },
+        "box64Preset": "PERFORMANCE"
+      },
+      "notes": "32-bit DX9. On Tier A/A- the 32-bit path must go through FEX-Core WoW64."
+    },
+    {
+      "id": "nfs-rivals",
+      "title": "Need for Speed Rivals",
+      "aliases": ["nfs rivals", "need for speed rivals"],
+      "steamAppId": 1262540,
+      "engine": "Frostbite",
+      "primaryAPI": "DX11",
+      "bitness": 64,
+      "drm": "EA-App",
+      "anticheat": "none",
+      "year": 2013,
+      "shared": {
+        "dxwrapper": "dxvk",
+        "wincomponents": "vcrun2019=1,dotnet48=1,physx=1,xnafx40=1,eafc=1"
+      },
+      "notes": "Frostbite — requires the EA App; locked to 30 FPS by design."
+    },
+    {
+      "id": "crysis",
+      "title": "Crysis (2007)",
+      "aliases": ["crysis 1"],
+      "steamAppId": 17300,
+      "engine": "CryEngine",
+      "primaryAPI": "DX10",
+      "bitness": "32->64",
+      "drm": "none",
+      "anticheat": "none",
+      "year": 2007,
+      "shared": {
+        "dxwrapper": "dxvk",
+        "box64Preset": "COMPATIBILITY",
+        "envVars": "WINEDEBUG=-all,MESA_EXTENSION_MAX_YEAR=2003"
+      },
+      "notes": "CryEngine 2 — the MESA_EXTENSION_MAX_YEAR fix is usually required."
+    },
+    {
+      "id": "megabonk",
+      "title": "Megabonk",
+      "aliases": ["mega bonk"],
+      "engine": "Unity",
+      "primaryAPI": "DX11",
+      "bitness": 64,
+      "drm": "Steam-DRM",
+      "anticheat": "none",
+      "year": 2025,
+      "shared": {
+        "dxwrapper": "dxvk",
+        "box64Preset": "STABILITY",
+        "execArgs": "-force-gfx-direct",
+        "unpackFiles": true
+      },
+      "notes": "Unity roguelike — STABILITY preset + DXVK."
+    }
+  ]
+}
