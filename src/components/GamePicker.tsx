@@ -68,6 +68,7 @@ export interface GameSelection {
   title: string;
   meta: GameMeta;
   curatedId?: string;
+  manual?: boolean;
 }
 
 const opts = <T extends string | number>(xs: T[]) =>
@@ -120,7 +121,7 @@ export function GamePicker({
 
   const commitManual = (next: GameMeta, title: string) => {
     setMeta(next);
-    onChange({ title: title || 'Custom Game', meta: next });
+    onChange({ title: title || 'Custom Game', meta: next, manual: true });
   };
 
   return (

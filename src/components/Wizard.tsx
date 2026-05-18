@@ -25,6 +25,8 @@ export function Wizard() {
       device,
       game: game.meta,
       gameTitle: game.title,
+      curatedId: game.curatedId,
+      manual: game.manual,
       priorities: prio.priorities,
       resolutionScalePct: prio.resolutionScalePct,
       sharpnessLevel: prio.sharpnessLevel,

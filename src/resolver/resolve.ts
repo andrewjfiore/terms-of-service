@@ -1,6 +1,6 @@
 import { buildBaseConfig } from '../data/defaults';
 import { TIERS } from '../data/devices';
-import { findCuratedGame } from '../data/gamesLoader';
+import { CURATED_GAMES, findCuratedGame } from '../data/gamesLoader';
 import { applyPriority } from '../data/priorities';
 import type { ConfigOverride } from '../types/container';
 import type {
@@ -44,7 +44,14 @@ export function resolve(input: ResolveInput): ResolveResult {
   const appliedRuleIds: string[] = [];
 
   // ---- Stage 1: curated fast path ----
-  const curated = findCuratedGame(input.gameTitle);
+  // Respect the explicit selection: an id-matched pick uses that entry; a
+  // manual-metadata entry NEVER falls onto the curated path even if its title
+  // collides with a curated game; otherwise fall back to a title lookup.
+  const curated = input.curatedId
+    ? CURATED_GAMES.find((g) => g.id === input.curatedId)
+    : input.manual
+      ? undefined
+      : findCuratedGame(input.gameTitle);
   let source: ResolveResult['source'];
   let matchedCuratedId: string | undefined;
 

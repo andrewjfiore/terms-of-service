@@ -148,6 +148,10 @@ export interface ResolveInput {
   device: Device;
   game: GameMeta;
   gameTitle: string;
+  /** Set when the user explicitly picked a curated entry. */
+  curatedId?: string;
+  /** Set when the user supplied metadata by hand (bypasses the curated DB). */
+  manual?: boolean;
   priorities: Priority[];
   /** UI-driven knobs for the upscaling priority. */
   resolutionScalePct?: number; // 50-100, % of panel native
