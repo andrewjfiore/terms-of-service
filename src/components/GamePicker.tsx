@@ -5,72 +5,38 @@ import {
   findBenchmark,
 } from '../data/benchmarks';
 import { searchCuratedGames } from '../data/gamesLoader';
-import type {
-  AntiCheat,
-  Bitness,
-  Device,
-  DRM,
-  Engine,
-  GameMeta,
-  GraphicsAPI,
-} from '../types/domain';
+import {
+  ANTICHEATS,
+  DRMS,
+  ENGINES,
+  GRAPHICS_APIS,
+} from '../types/enums';
+import type { Bitness, Device, GameMeta } from '../types/domain';
 import { Field, Select } from './ui/controls';
 
-const ENGINES: Engine[] = [
-  'Unity',
-  'Unreal-3',
-  'Unreal-4',
-  'Unreal-5',
-  'Source',
-  'Source-2',
-  'RE-Engine',
-  'RAGE',
-  'Frostbite',
-  'Creation',
-  'REDengine',
-  'id-Tech',
-  'CryEngine',
-  'LibGDX',
-  'GameMaker',
-  'RPG-Maker',
-  'SAGE',
-  'proprietary',
-];
-const APIS: GraphicsAPI[] = [
-  'DirectDraw',
-  'DX9',
-  'DX10',
-  'DX11',
-  'DX12',
-  'OpenGL',
-  'Vulkan',
-];
-const DRMS: DRM[] = [
-  'none',
-  'Steam-DRM',
-  'Denuvo',
-  'GOG-Galaxy',
-  'EA-App',
-  'Ubisoft-Connect',
-  'Epic',
-];
-const ACS: AntiCheat[] = [
-  'none',
-  'VAC',
-  'EAC',
-  'BattlEye',
-  'Denuvo-AntiCheat',
-  'Riot-Vanguard',
-  'Roblox-Hyperion',
-];
+const DEFAULT_META: GameMeta = {
+  engine: 'Unity',
+  primaryAPI: 'DX11',
+  bitness: 64,
+  drm: 'Steam-DRM',
+  anticheat: 'none',
+  year: 2022,
+};
+
+const BITNESS_MAP: Record<string, Bitness> = {
+  '32': 32,
+  '64': 64,
+  '32->64': '32->64',
+};
 
 export interface GameSelection {
   title: string;
   meta: GameMeta;
   curatedId?: string;
+  manual?: boolean;
 }
 
-const opts = <T extends string | number>(xs: T[]) =>
+const opts = <T extends string | number>(xs: readonly T[]) =>
   xs.map((x) => ({ value: x, label: String(x) }));
 
 export function GamePicker({
@@ -84,20 +50,10 @@ export function GamePicker({
 }) {
   const [q, setQ] = useState(value?.title ?? '');
   const [manual, setManual] = useState(false);
-  const [meta, setMeta] = useState<GameMeta>(
-    value?.meta ?? {
-      engine: 'Unity',
-      primaryAPI: 'DX11',
-      bitness: 64,
-      drm: 'Steam-DRM',
-      anticheat: 'none',
-      year: 2022,
-    }
-  );
+  const meta = value?.meta ?? DEFAULT_META;
 
   const results = useMemo(() => searchCuratedGames(q), [q]);
-  const bench =
-    value && device ? findBenchmark(value.title) : undefined;
+  const bench = value && device ? findBenchmark(value.title) : undefined;
 
   const pickCurated = (id: string) => {
     const g = results.find((r) => r.id === id);
@@ -119,8 +75,7 @@ export function GamePicker({
   };
 
   const commitManual = (next: GameMeta, title: string) => {
-    setMeta(next);
-    onChange({ title: title || 'Custom Game', meta: next });
+    onChange({ title: title || 'Custom Game', meta: next, manual: true });
   };
 
   return (
@@ -186,7 +141,7 @@ export function GamePicker({
           <Field label="Primary graphics API">
             <Select
               value={meta.primaryAPI}
-              options={opts(APIS)}
+              options={opts(GRAPHICS_APIS)}
               onChange={(primaryAPI) =>
                 commitManual({ ...meta, primaryAPI }, q)
               }
@@ -201,17 +156,7 @@ export function GamePicker({
                 { value: '32->64', label: '32→64 (mixed)' },
               ]}
               onChange={(v) =>
-                commitManual(
-                  {
-                    ...meta,
-                    bitness: (v === '32'
-                      ? 32
-                      : v === '64'
-                        ? 64
-                        : '32->64') as Bitness,
-                  },
-                  q
-                )
+                commitManual({ ...meta, bitness: BITNESS_MAP[v] ?? 64 }, q)
               }
             />
           </Field>
@@ -235,7 +180,7 @@ export function GamePicker({
           <Field label="Anti-cheat">
             <Select
               value={meta.anticheat}
-              options={opts(ACS)}
+              options={opts(ANTICHEATS)}
               onChange={(anticheat) =>
                 commitManual({ ...meta, anticheat }, q)
               }

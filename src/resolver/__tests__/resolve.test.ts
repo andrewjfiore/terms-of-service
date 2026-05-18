@@ -130,3 +130,69 @@ describe('Vulkan title gets no DX wrapper via heuristics', () => {
     expect(r.config.dxwrapper).toBe('none');
   });
 });
+
+describe('regression: manual metadata with a curated-colliding title', () => {
+  // User typed "Elden Ring" but entered their own metadata. The curated
+  // Elden Ring profile (DX12 -> VKD3D) must NOT hijack the resolution.
+  const r = resolve({
+    device: TIER_B,
+    gameTitle: 'Elden Ring',
+    manual: true,
+    game: meta({ engine: 'Unity', primaryAPI: 'OpenGL', year: 2010 }),
+    priorities: [],
+  });
+  it('uses the heuristics path and the supplied metadata', () => {
+    expect(r.source).toBe('heuristic');
+    expect(r.matchedCuratedId).toBeUndefined();
+    expect(r.config.dxwrapper).toBe('wined3d'); // OpenGL heuristic, not VKD3D
+  });
+});
+
+describe('explicit curatedId is honoured regardless of title text', () => {
+  const r = resolve({
+    device: TIER_A,
+    gameTitle: 'typed something else entirely',
+    curatedId: 'elden-ring',
+    game: meta({ primaryAPI: 'DX12' }),
+    priorities: [],
+  });
+  it('takes the curated path for the chosen id', () => {
+    expect(r.source).toBe('curated');
+    expect(r.matchedCuratedId).toBe('elden-ring');
+    expect(r.config.dxwrapper).toBe('vkd3d');
+  });
+});
+
+describe('coherence: stability priority on a curated Bionic profile', () => {
+  // stability forces glibc; curated Elden Ring set graphicsDriver=wrapper-v2
+  // (a Bionic-only path). The validator must reconcile, not just warn.
+  const r = resolve({
+    device: TIER_A,
+    gameTitle: 'Elden Ring',
+    game: meta({ primaryAPI: 'DX12', drm: 'Steam-DRM', anticheat: 'EAC' }),
+    priorities: ['stability'],
+  });
+  it('rewrites the driver to a Glibc-coherent pair', () => {
+    expect(r.config.containerVariant).toBe('glibc');
+    expect(r.config.graphicsDriver).toBe('turnip');
+    expect(r.config.graphicsDriver).not.toBe('wrapper-v2');
+    expect(r.messages.some((m) => /reconciled to turnip/.test(m.text))).toBe(
+      true
+    );
+  });
+});
+
+describe('coherence: Mali force-to-glibc leaves no contradictory driver', () => {
+  const r = resolve({
+    device: TIER_D,
+    gameTitle: 'Unknown UE5 Game',
+    game: meta({ engine: 'Unreal-5', primaryAPI: 'DX12' }),
+    priorities: ['maxfps'],
+  });
+  it('driver and driver-version are a coherent Glibc pair', () => {
+    expect(r.config.containerVariant).toBe('glibc');
+    expect(r.config.graphicsDriver).toBe('virgl');
+    expect(r.config.graphicsDriverVersion).toBe('virgl');
+    expect(r.config.graphicsDriverVersion).not.toBe('turnip26.2.0');
+  });
+});

@@ -1,3 +1,4 @@
+import { isMali } from './devices';
 import type { ConfigOverride } from '../types/container';
 import type {
   Message,
@@ -81,9 +82,7 @@ const PRIORITY_FNS: Record<Priority, PriorityFn> = {
       graphicsDriverConfig: {
         presentMode: 'mailbox',
         resourceType: 'auto',
-        ...(ctx.tier === 'A' || ctx.tier === 'A-' || ctx.tier === 'B'
-          ? { bcnEmulation: 'off' }
-          : {}),
+        ...(isMali(ctx.tier) ? {} : { bcnEmulation: 'off' }),
       },
       csmt: true,
       startupSelection: 2,
@@ -164,7 +163,7 @@ const PRIORITY_FNS: Record<Priority, PriorityFn> = {
   lowlatency: (ctx) => ({
     override: {
       graphicsDriverConfig: {
-        presentMode: ctx.tier === 'D' || ctx.tier === 'E' ? 'mailbox' : 'immediate',
+        presentMode: isMali(ctx.tier) ? 'mailbox' : 'immediate',
         resourceType: 'image',
         disablePresentWait: '0',
       },

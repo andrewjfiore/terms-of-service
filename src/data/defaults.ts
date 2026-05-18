@@ -1,3 +1,4 @@
+import { isMali } from './devices';
 import type { WorkingConfig } from '../types/container';
 import type { DeviceTierInfo } from '../types/domain';
 
@@ -8,7 +9,7 @@ import type { DeviceTierInfo } from '../types/domain';
 export function buildBaseConfig(t: DeviceTierInfo): WorkingConfig {
   const bionic = t.defaultVariant === 'bionic';
   const noAArch32 = !t.hasAArch32;
-  const mali = t.tier === 'D' || t.tier === 'E';
+  const mali = isMali(t.tier);
 
   // Default to a conservatively bundled Wine build, never the newest cloud
   // recommendation (research: avoids the Issue #580 un-bundled-Proton crash).
@@ -67,7 +68,7 @@ export function buildBaseConfig(t: DeviceTierInfo): WorkingConfig {
     fexcorePreset: 'Fast',
     wow64Mode: true,
     cpuList: '0-7',
-    cpuListWoW64: t.tier === 'A' || t.tier === 'A-' ? '6-7' : '4-7',
+    cpuListWoW64: t.hasAArch32 ? '4-7' : '6-7',
 
     // ---- Graphics ----
     graphicsDriver: t.defaultGraphicsDriver,

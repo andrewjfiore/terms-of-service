@@ -25,6 +25,8 @@ export function Wizard() {
       device,
       game: game.meta,
       gameTitle: game.title,
+      curatedId: game.curatedId,
+      manual: game.manual,
       priorities: prio.priorities,
       resolutionScalePct: prio.resolutionScalePct,
       sharpnessLevel: prio.sharpnessLevel,
@@ -33,10 +35,7 @@ export function Wizard() {
   }, [device, game, prio]);
 
   const canNext =
-    (step === 0 && !!device) ||
-    (step === 1 && !!game) ||
-    step === 2 ||
-    step === 3;
+    (step === 0 && !!device) || (step === 1 && !!game) || step === 2;
 
   return (
     <div className="space-y-6">
@@ -92,7 +91,7 @@ export function Wizard() {
         </button>
         <button
           className="btn-primary"
-          disabled={!canNext || step === 3}
+          disabled={!canNext}
           onClick={() => setStep((s) => Math.min(3, s + 1))}
         >
           {step === 2 ? 'Build config' : 'Next'}

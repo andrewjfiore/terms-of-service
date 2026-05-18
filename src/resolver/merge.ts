@@ -25,9 +25,8 @@ export function mergeCsvKv(base: string, add: string): string {
 const CSV_KV_FIELDS = new Set(['envVars', 'wincomponents']);
 const NESTED_FIELDS = new Set(['graphicsDriverConfig', 'dxwrapperConfig']);
 
-// Applies a partial override on top of a WorkingConfig, returning a new object.
-// Nested config maps + extras shallow-merge; envVars/wincomponents union-merge;
-// everything else is a straight replace.
+// Nested config maps + extras shallow-merge; envVars/wincomponents
+// union-merge; every other field is a straight replace. Returns a new object.
 export function applyOverride(
   config: WorkingConfig,
   ov: ConfigOverride
@@ -50,8 +49,7 @@ export function applyOverride(
       const k = key as 'envVars' | 'wincomponents';
       next[k] = mergeCsvKv(next[k], value as string);
     } else {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (next as any)[key] = value;
+      (next as Record<string, unknown>)[key] = value;
     }
   }
   return next;
