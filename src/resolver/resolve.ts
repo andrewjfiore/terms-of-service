@@ -8,7 +8,7 @@ import type {
   ResolveInput,
   ResolveResult,
 } from '../types/domain';
-import { curatedOverride } from './curated';
+import { curatedOverrides } from './curated';
 import { runHeuristics } from './heuristicEngine';
 import { applyOverride, applyOverrides } from './merge';
 import { toExport, toJson } from './serialize';
@@ -58,7 +58,7 @@ export function resolve(input: ResolveInput): ResolveResult {
   if (curated) {
     source = 'curated';
     matchedCuratedId = curated.id;
-    config = applyOverride(config, curatedOverride(curated, tier.tier));
+    config = applyOverrides(config, curatedOverrides(curated, tier.tier));
     messages.push({
       level: 'info',
       text: `Matched curated profile "${curated.title}"${

@@ -1,3 +1,4 @@
+import { isAdreno, isMali } from '../data/devices';
 import type { GraphicsDriver, WorkingConfig } from '../types/container';
 import type {
   Device,
@@ -11,7 +12,6 @@ export interface ValidationResult {
   messages: Message[];
 }
 
-const ADRENO_TIERS = new Set(['A', 'A-', 'B', 'C']);
 const BIONIC_DRIVERS = new Set<GraphicsDriver>(['wrapper', 'wrapper-v2']);
 const GLIBC_DRIVERS = new Set<GraphicsDriver>(['turnip', 'virgl', 'vortek']);
 
@@ -21,13 +21,41 @@ function glibcDriver(tier: DeviceTierInfo): {
   driver: GraphicsDriver;
   version: string;
 } {
-  if (ADRENO_TIERS.has(tier.tier)) {
+  if (isAdreno(tier.tier)) {
     const turnip =
       tier.bundledDriverVersions.find((v) => v.startsWith('turnip')) ??
       'turnip26.0.0_R8';
     return { driver: 'turnip', version: turnip };
   }
   return { driver: 'virgl', version: 'virgl' };
+}
+
+// Container variant <-> graphics driver must be coherent. Rewrite (not just
+// warn) so the export is launchable even when a priority overlay produced a
+// Bionic-driver / Glibc-container mix. Returns the info message, if any.
+function reconcileDriver(
+  config: WorkingConfig,
+  tier: DeviceTierInfo
+): Message | null {
+  const from = config.graphicsDriver;
+  if (config.containerVariant === 'glibc' && BIONIC_DRIVERS.has(from)) {
+    const g = glibcDriver(tier);
+    config.graphicsDriver = g.driver;
+    config.graphicsDriverVersion = g.version;
+    return {
+      level: 'info',
+      text: `graphicsDriver=${from} is a Bionic-only Turnip path but the container is Glibc — reconciled to ${g.driver} (${g.version}).`,
+    };
+  }
+  if (config.containerVariant === 'bionic' && GLIBC_DRIVERS.has(from)) {
+    config.graphicsDriver = tier.defaultGraphicsDriver;
+    config.graphicsDriverVersion = tier.defaultGraphicsDriverVersion;
+    return {
+      level: 'info',
+      text: `graphicsDriver=${from} is a Glibc-path driver but the container is Bionic — reconciled to ${tier.defaultGraphicsDriver} (${tier.defaultGraphicsDriverVersion}).`,
+    };
+  }
+  return null;
 }
 
 // Stage 3: applies safe auto-corrections and emits errors/warnings/info.
@@ -46,7 +74,7 @@ export function validate(
     extras: { ...input.extras },
   };
   const messages: Message[] = [];
-  const mali = tier.tier === 'D' || tier.tier === 'E';
+  const mali = isMali(tier.tier);
 
   // No-AArch32 flagship SoC: 32-bit Windows code can only run through
   // FEX-Core WoW64 pinned to the prime cores. Deterministic regardless of
@@ -93,33 +121,8 @@ export function validate(
     });
   }
 
-  // Container variant <-> graphics driver must be coherent. Rewrite (not just
-  // warn) so the exported config is actually launchable even when a priority
-  // overlay produced a Bionic-driver / Glibc-container mix.
-  if (
-    config.containerVariant === 'glibc' &&
-    BIONIC_DRIVERS.has(config.graphicsDriver)
-  ) {
-    const g = glibcDriver(tier);
-    const from = config.graphicsDriver;
-    config.graphicsDriver = g.driver;
-    config.graphicsDriverVersion = g.version;
-    messages.push({
-      level: 'info',
-      text: `graphicsDriver=${from} is a Bionic-only Turnip path but the container is Glibc — reconciled to ${g.driver} (${g.version}).`,
-    });
-  } else if (
-    config.containerVariant === 'bionic' &&
-    GLIBC_DRIVERS.has(config.graphicsDriver)
-  ) {
-    const from = config.graphicsDriver;
-    config.graphicsDriver = tier.defaultGraphicsDriver;
-    config.graphicsDriverVersion = tier.defaultGraphicsDriverVersion;
-    messages.push({
-      level: 'info',
-      text: `graphicsDriver=${from} is a Glibc-path driver but the container is Bionic — reconciled to ${tier.defaultGraphicsDriver} (${tier.defaultGraphicsDriverVersion}).`,
-    });
-  }
+  const reconciled = reconcileDriver(config, tier);
+  if (reconciled) messages.push(reconciled);
 
   // launchRealSteam + useLegacyDRM -> mutually exclusive.
   if (config.launchRealSteam && config.useLegacyDRM) {

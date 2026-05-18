@@ -1,60 +1,23 @@
 import type {
+  ANTICHEATS,
+  DRMS,
+  ENGINES,
+  GRAPHICS_APIS,
+  TIER_ORDER,
+} from './enums';
+import type {
   ConfigOverride,
   ContainerVariant,
   GraphicsDriver,
   WorkingConfig,
 } from './container';
 
-export type Tier = 'A' | 'A-' | 'B' | 'C' | 'D' | 'E';
-
-export type GraphicsAPI =
-  | 'DirectDraw'
-  | 'DX9'
-  | 'DX10'
-  | 'DX11'
-  | 'DX12'
-  | 'OpenGL'
-  | 'Vulkan';
-
+export type Tier = (typeof TIER_ORDER)[number];
+export type GraphicsAPI = (typeof GRAPHICS_APIS)[number];
 export type Bitness = 32 | 64 | '32->64';
-
-export type Engine =
-  | 'Unity'
-  | 'Unreal-3'
-  | 'Unreal-4'
-  | 'Unreal-5'
-  | 'Source'
-  | 'Source-2'
-  | 'RE-Engine'
-  | 'RAGE'
-  | 'Frostbite'
-  | 'Creation'
-  | 'REDengine'
-  | 'id-Tech'
-  | 'CryEngine'
-  | 'LibGDX'
-  | 'GameMaker'
-  | 'RPG-Maker'
-  | 'SAGE'
-  | 'proprietary';
-
-export type DRM =
-  | 'none'
-  | 'Steam-DRM'
-  | 'Denuvo'
-  | 'GOG-Galaxy'
-  | 'EA-App'
-  | 'Ubisoft-Connect'
-  | 'Epic';
-
-export type AntiCheat =
-  | 'none'
-  | 'VAC'
-  | 'EAC'
-  | 'BattlEye'
-  | 'Denuvo-AntiCheat'
-  | 'Riot-Vanguard'
-  | 'Roblox-Hyperion';
+export type Engine = (typeof ENGINES)[number];
+export type DRM = (typeof DRMS)[number];
+export type AntiCheat = (typeof ANTICHEATS)[number];
 
 export interface DeviceTierInfo {
   tier: Tier;

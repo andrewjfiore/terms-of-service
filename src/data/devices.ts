@@ -1,5 +1,12 @@
 import type { Device, DeviceTierInfo, Tier } from '../types/domain';
 
+// Adreno (Snapdragon) tiers run the Bionic/Turnip path; Mali/legacy tiers are
+// Glibc/VirGL-only. Single source for these predicates.
+export const ADRENO_TIERS = new Set<Tier>(['A', 'A-', 'B', 'C']);
+export const MALI_TIERS = new Set<Tier>(['D', 'E']);
+export const isMali = (tier: Tier) => MALI_TIERS.has(tier);
+export const isAdreno = (tier: Tier) => ADRENO_TIERS.has(tier);
+
 // Device-tier matrix. Sourced from the research foundation (Section 3 "Device
 // Tier Matrix" + "Critical edge cases per tier").
 export const TIERS: Record<Tier, DeviceTierInfo> = {

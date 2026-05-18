@@ -1,4 +1,5 @@
 import type { FpsRow } from '../types/domain';
+import { titlesMatch } from './textMatch';
 
 // Ryan Retro cross-device FPS grid (research Section 2, "Snapshot — May 2026").
 // IMPORTANT: per ryanretro.com/benchmarks methodology, these are "'eyeballed'
@@ -35,13 +36,8 @@ export const BENCHMARKS: FpsRow[] = [
   row('Slay the Spire', [110, 115, 142, 145, 200, 240, null]),
 ];
 
-const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
-
 export function findBenchmark(title: string): FpsRow | undefined {
-  const q = norm(title);
-  return BENCHMARKS.find(
-    (r) => norm(r.title) === q || norm(r.title).includes(q) || q.includes(norm(r.title))
-  );
+  return BENCHMARKS.find((r) => titlesMatch(r.title, title));
 }
 
 export const BENCHMARK_CAVEAT =

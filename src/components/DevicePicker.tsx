@@ -1,8 +1,7 @@
 import { useMemo, useState } from 'react';
 import { DEVICES, TIERS } from '../data/devices';
-import type { Device, Tier } from '../types/domain';
-
-const TIER_ORDER: Tier[] = ['A', 'A-', 'B', 'C', 'D', 'E'];
+import { TIER_ORDER } from '../types/enums';
+import type { Device } from '../types/domain';
 
 export function DevicePicker({
   value,
